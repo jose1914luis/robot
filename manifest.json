@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Passport App",
-    "version": "2.1",
+    "version": "3",
     "description": "Applicacion para la generacion automatica del pasaporte",
     "author": "Jose Luis Garcia Hernandez",  
     "action": {
@@ -16,7 +16,7 @@
         {
             "matches": ["<all_urls>"],
 			"match_origin_as_fallback": true,
-            "js": ["src/jquery-1.11.1.min.js", "src/popup.js", "src/formulario.js"]
+            "js": ["src/jquery-3.6.3.min.js", "src/utils.js","src/popup.js", "src/formulario.js"]
         }
     ],
 	"content_security_policy": {
@@ -32,12 +32,14 @@
 		"scripting"
     ],
 	"host_permissions": [
-		"*://*/*",
-		"<all_urls>"
+		"<all_urls>",
+        "http://*/*",
+        "https://*/*",
+        "*://*/*"
 	],
     "web_accessible_resources": [
 	{
-      "resources": ["view/formulario.html"],
+      "resources": ["view/formulario.html", "assets/formulario.json", "src/inject-pago.js"],
       "matches": [ "<all_urls>" ]
     }
     ]

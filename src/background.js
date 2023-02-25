@@ -1,17 +1,9 @@
 
-chrome.runtime.onInstalled.addListener(() => {
-	var value = {
-		  "cedula":"1020453492",
-		  "nombres":"Juan David",
-		  "apellidos":"Rincón Sánchez",
-		  "celular":"3046389375",
-		  "correo":"juandavidentrenador@gmail.com",
-		  "tipo":"1",
-		  "fecha":"19/08/2022"
-	   };
-	chrome.storage.sync.set({'passport': value}, function() {
-		console.log('passport setup');
-	});
+chrome.runtime.onInstalled.addListener(async () => {
+	
+
+	chrome.storage.sync.set({'index':0}, () => console.log('index initial')
+	);
 });
 
 
@@ -19,10 +11,6 @@ async function getTab() {
   let queryOptions = { active: true, currentWindow: true };
   let tabs = await chrome.tabs.query(queryOptions);
   return tabs[0];
-}
-
-async function getValue(callback) {
-  await chrome.storage.sync.get(['oi'], callback);
 }
 
 // Fired when a tab is updated.
@@ -36,7 +24,7 @@ chrome.tabs.onUpdated.addListener(async function () {
 			var file = '';
 			if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/pago/"){
 				
-				 file = 'src/inject-pago.js';
+				file = 'src/inject-pago.js';
 				  
 			}else if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/createAppointment/") {
 
@@ -48,13 +36,7 @@ chrome.tabs.onUpdated.addListener(async function () {
 				
 				chrome.scripting.executeScript({
 				  target: { tabId: tab.id },
-				  files: ['src/jquery-1.11.1.min.js']
-				},
-				() => { 
-					chrome.scripting.executeScript({
-					  target: { tabId: tab.id },
-					  files: [file]
-					})
+				  files: ['src/jquery-3.6.3.min.js', 'src/utils.js', file]
 				});
 			}
 		}

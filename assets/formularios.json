@@ -1,12 +1,15 @@
 {
-   "passport":{
-      "cedula":"1020453492",
-      "nombres":"Juan David",
-      "apellidos":"Rincón Sánchez",
-      "celular":"3046389375",
-      "correo":"juandavidentrenador@gmail.com",
-	  "tipo":"1",
-	  "fecha":"19/08/2022"
-   }
+   "passports":[
+      {
+         "tipoDoc":"CC",
+         "cedula":"1020453492",
+         "nombres":"Juan David",
+         "apellidos":"Rincón Sánchez",
+         "celular":"3046389375",
+         "correo":"juandavidentrenador@gmail.com",
+         "tipo":"1",
+         "fecha":"19/08/2022"
+      }
+   ]
 }
 
