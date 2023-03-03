@@ -1,38 +1,41 @@
 function setData(index, passports) {
 
-	console.log(index)
-	console.log(passports)
-	$('#sltDoc').val(passports[index].tipoDoc);
-	$('#txtCedula').val(passports[index].cedula);
-	$('#txtNombre').val(passports[index].nombres);
-	$('#txtApellido').val(passports[index].apellidos);
-	$('#txtCelular').val(passports[index].celular);
-	$('#txtCorreo').val(passports[index].correo);
-	$('#sltTipo').val(passports[index].tipo);
-	$('#txtFecha').val(passports[index].fecha);
+	const passport = passports[index];
+	$('#sltDoc').val(passport.tipoDoc);
+	$('#txtCedula').val(passport.cedula);
+	$('#txtNombre').val(passport.nombres);
+	$('#txtApellido').val(passport.apellidos);
+	$('#txtCelular').val(passport.celular);
+	$('#txtCorreo').val(passport.correo);
+	$('#sltTipo').val(passport.tipo);
+	$('#txtFecha').val(passport.fecha);
 }
 
 async function loadFromMemory(index) {
 
-	let passports = await getStorageData('passports');
+	const passports = await getStorageData('passports');
 	
 	setData(index, passports);
 }
 
 function buildButtons(passports){
 
-	$("#people").empty();
-	let btnLess = '<button id="btnLess" type="button" class="btn btn-danger me-1">-</button>';
-	$("#people").append(btnLess);
+	const $people = $("#people");
+	$people.empty();
 
-	$("#btnLess").click(async function () {
+	const btnLess = $('<button/>', {
+		id: 'btnLess',
+		type: 'button',
+		class: 'btn btn-danger me-1',
+		html: '-'
+	}).appendTo($people);
 
-		let index = await getStorageData('index');
-		console.log(index)
-		
+	btnLess.click(async function () {
+
+		const index = await getStorageData('index');
 		let passports = await getStorageData('passports');
-		//console.log(passports)
 		if(passports.length > 1){
+
 			passports.splice(index, 1); 
 			await setStorageData({ "passports": passports });
 			console.log(passports)
@@ -42,52 +45,70 @@ function buildButtons(passports){
 		
 	});
 
-	for(let i = 0; i < passports.length; i++){
-		let newButton = $('<button id="person' + i + '" type="button" class="btn btn-primary me-1">' + (i + 1) + ' - ' + passports[i].nombres+ '</button>');
-		$("#people").append(newButton);
-		$("#person" + i).click(async function () {
+	passports.forEach(
+		(passport, i) =>{
 
-			await setStorageData({ 'index': i });
-			loadFromMemory(i);
-		});
-	}
+			const newButton = $('<button/>', {
+				id: `person${i}`,
+				type: 'button',
+				class: 'btn btn-primary me-1',
+				html: `${i + 1} - ${passport.nombres}`
+			}).appendTo($people);
+			newButton.click(async function () {
 
-	let btnMore = '<button id="morePeople" type="button" class="btn btn-primary">+</button>'
-	$("#people").append(btnMore);
+				await setStorageData({ 'index': i });
+				loadFromMemory(i);
+			});
+		}
+	)
+
+	const btnMore = $('<button/>', {
+		id: 'morePeople',
+		type: 'button',
+		class: 'btn btn-primary',
+		html: '+'
+	}).appendTo($people);
 	
-	$("#morePeople").click(async function () {
+	btnMore.click(async function () {
 
 		let passportsIndex = await getStorageData('passports');
 
 		let index = passportsIndex.length;
 
-		var newButton = $('<button id="person' + index + '" type="button" class="btn btn-primary me-1">' + (index + 1) + '</button>');
-		$(newButton).insertBefore("#morePeople");
-		//$("#morePeople").insertBefore(newButton);
+		const newButton = $('<button/>', {
+			id: 'person' + index,
+			type: 'button',
+			class: 'btn btn-primary me-1',
+			html: (index + 1)
+		}).insertBefore(btnMore);
 		
 		await setStorageData({ 'index': index });
 
-		$("#person" + index).click(function () {
+		newButton.click(async function () {
 
+			//console.log(index)
 			loadFromMemory(index);
+			await setStorageData({ 'index': index });
 		});
 
 		let passports = await getStorageData('passports');
 
-		passports.push({
-			"tipoDoc": "CC",
-			"cedula": "",
-			"nombres": "",
-			"apellidos": "",
-			"celular": "",
-			"correo": "",
-			"tipo": "1",
-			"fecha": "19/08/2022"
-		});
 
-		await setStorageData({ "passports": passports });
-
-		setData(index, passports);
+		const updatedPassports = [
+			...passports,
+			{
+			  "tipoDoc": "CC",
+			  "cedula": "",
+			  "nombres": "",
+			  "apellidos": "",
+			  "celular": "",
+			  "correo": "",
+			  "tipo": "1",
+			  "fecha": "19/08/2022"
+			}
+		  ];
+		  await setStorageData({ "passports": updatedPassports });
+		  setData(index, updatedPassports);
 
 	});
 }
@@ -101,24 +122,22 @@ $(async function () {
 
 	if (passports === undefined || passports.length == 0) {
 
-		$.getJSON(chrome.runtime.getURL('/assets/formularios.json'), async (fileData) => {
+		await $.getJSON(chrome.runtime.getURL('/assets/formularios.json'), async (fileData) => {
 
-			console.log('if')
-			console.log(fileData)
-			setData(index, fileData.passports);
+			passports = fileData.passports;
+			setData(index, passports);
 			await setStorageData(fileData);
-			buildButtons(fileData.passports)
 
 		});
 
 
 	} else {
 
-		console.log('else')
 		setData(index, passports);
-		buildButtons(passports)
 
 	}
+
+	buildButtons(passports)
 
 
 	$("#btnGuardar").click(async function () {

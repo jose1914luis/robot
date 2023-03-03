@@ -6,7 +6,8 @@ $(async function () {
 	let index = await getStorageData('index');
 	let passports = await getStorageData('passports');
 	console.log(passports);
-
+	console.log('index ' + index);
+	console.log(passports[index].tipoDoc)
 	$('#tipo_ide').val(passports[index].tipoDoc);
 	$('#num_ide').val(formatString(passports[index].cedula));
 	$('#num_ide_confirm').val(formatString(passports[index].cedula));

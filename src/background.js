@@ -8,39 +8,43 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 
 async function getTab() {
-  let queryOptions = { active: true, currentWindow: true };
-  let tabs = await chrome.tabs.query(queryOptions);
+	
+  const queryOptions = {url: [
+    'https://sedeelectronica.antioquia.gov.co/pasaporte/user/*'
+  ]};
+  const tabs = await chrome.tabs.query(queryOptions);
+  //console.log(tabs[0])
   return tabs[0];
 }
 
 // Fired when a tab is updated.
 chrome.tabs.onUpdated.addListener(async function () {
 
-    await getTab().then(tab => {
-        
-		//console.log(tab);
-		if(tab.status == "complete"){
+	const tab = await getTab();
+	//console.log(tab)
+	if(tab && tab.status == "complete"){
 			
-			var file = '';
-			if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/pago/"){
-				
-				file = 'src/inject-pago.js';
-				  
-			}else if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/createAppointment/") {
+		let file = '';
+		if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/pago/"){
+			
+			file = 'pago';
+			  
+		}else if (tab.url == "https://sedeelectronica.antioquia.gov.co/pasaporte/user/createAppointment/") {
 
-				file = 'src/inject-cita.js';
-			}
-			//console.log(file);
-			
-			if(file != ''){
-				
-				chrome.scripting.executeScript({
-				  target: { tabId: tab.id },
-				  files: ['src/jquery-3.6.3.min.js', 'src/utils.js', file]
-				});
-			}
+			file = 'cita';
 		}
-    })
+		
+		
+		if(file != ''){
+			
+			const filePath = `src/inject-${file}.js`;
+			//console.log(filePath);
+			chrome.scripting.executeScript({
+			  target: { tabId: tab.id },
+			  files: [filePath]
+			});
+		}
+	}
 	
 })
 
