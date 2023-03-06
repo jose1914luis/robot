@@ -19,3 +19,8 @@
 		);
 	});
 }
+
+function formatString(s) {
+	return s.split("").reverse().join("").replace(/(.{3})/g, "$1.").split("").reverse().join("");
+}
+

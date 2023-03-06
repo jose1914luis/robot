@@ -18,10 +18,17 @@ async function getTab() {
 }
 
 // Fired when a tab is updated.
-chrome.tabs.onUpdated.addListener(async function () {
+
+chrome.tabs.onUpdated.addListener(async function(){ await runProgram()})
+
+chrome.tabs.onCreated.addListener(async function(){ await runProgram()});
+
+
+
+async function runProgram() {
 
 	const tab = await getTab();
-	//console.log(tab)
+	console.log(tab)
 	if(tab && tab.status == "complete"){
 			
 		let file = '';
@@ -38,14 +45,13 @@ chrome.tabs.onUpdated.addListener(async function () {
 		if(file != ''){
 			
 			const filePath = `src/inject-${file}.js`;
-			//console.log(filePath);
+			console.log(filePath);
 			chrome.scripting.executeScript({
 			  target: { tabId: tab.id },
-			  files: [filePath]
+			  files: ['src/jquery-3.6.3.min.js', 'src/utils.js', filePath]
 			});
 		}
 	}
 	
-})
-
+}
 

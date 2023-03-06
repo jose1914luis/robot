@@ -1,5 +1,3 @@
-//import { getStorageData, setStorageData } from "./utils.js";
-
 $(async function () {
 
 
@@ -22,6 +20,3 @@ $(async function () {
 
 });
 
-function formatString(s) {
-	return s.split("").reverse().join("").replace(/(.{3})/g, "$1.").split("").reverse().join("");
-}
